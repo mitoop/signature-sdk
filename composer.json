@@ -1,0 +1,18 @@
+{
+    "name": "mitoop/laravel-signature-sdk",
+    "autoload": {
+        "psr-4": {
+            "Mitoop\\LaravelSignatureSdk\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "mitoop",
+            "email": "me@mitoop.com"
+        }
+    ],
+    "require": {
+      "ext-json": "*",
+      "ext-openssl": "*"
+    }
+}
