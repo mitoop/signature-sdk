@@ -3,7 +3,6 @@ SDK for [Laravel Signature](https://github.com/mitoop/laravel-signature)
 
 ## Requirements
 - PHP 7.4 or higher
-- 
 ## Installation
 To install the Laravel Signature SDK, run the following command:
 ```bash
