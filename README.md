@@ -1,28 +1,30 @@
-# Laravel Signature Sdk
-SDK for [Laravel Signature](https://github.com/mitoop/laravel-signature)
+# Signature Sdk
+Signature SDK is a framework-agnostic PHP library that provides secure request signing and verification logic.
+It is the core signing engine used by laravel-signature, but can also be used independently in any PHP project.
 
 ## Requirements
 - PHP 7.4 or higher
+- OpenSSL extension enabled
+- 
 ## Installation
-To install the Laravel Signature SDK, run the following command:
+Install via Composer:
 ```bash
-composer require mitoop/laravel-signature-sdk
+composer require mitoop/signature-sdk
 ```
 
 ## 🚀 Quick Start
 
-#### Using RSA Signature:
+#### 🔐 Using RSA Signature:
 ```php
-use Mitoop\LaravelSignatureSdk\RsaSigner;
-use Mitoop\LaravelSignatureSdk\RequestSigner;
+use Mitoop\SignatureSdk\RsaSigner;
+use Mitoop\SignatureSdk\RequestSigner;
 
-$privateKey = 'your_private_key_string_without_BEGIN/END';
-$signer = new RsaSigner($privateKey);
+$privateKey = 'your_rsa_private_key_string_without_BEGIN/END';
 
 $requestSigner = new RequestSigner(
     mchid: 'your_merchant_id',
     appid: 'your_app_id',
-    signer: $signer,
+    signer: new RsaSigner($privateKey),
     platformPrefix: 'XXX' // Platform prefix
 );
 
@@ -34,29 +36,20 @@ $authorization = $requestSigner->generateAuthorization(
         'currency' => 'USD'
     ]
 );
-```
 
-#### Using HMAC Signature:
-```php
-use Mitoop\LaravelSignatureSdk\HmacSigner;
-use Mitoop\LaravelSignatureSdk\RequestSigner;
+// Initialize Guzzle client
+$client = new Client();
 
-$secretKey = 'your_hmac_secret_key';
-$signer = new HmacSigner($secretKey);
-
-$requestSigner = new RequestSigner(
-    mchid: 'your_merchant_id',
-    appid: 'your_app_id',
-    signer: $signer,
-    platformPrefix: 'XXX' // Platform prefix
-);
-
-$authorization = $requestSigner->generateAuthorization(
-    method: 'POST',
-    url: 'https://api.example.com/v1/pay',
-    data: [
+$response = $client->post('https://api.example.com/v1/pay', [
+    'json' => [
         'amount' => 100,
-        'currency' => 'USD'
+        'currency' => 'USD',
+    ],
+    'headers' => [
+        'Authorization' => $authorization,
+        'Accept' => 'application/json',
     ]
-);
+]);
+
+echo $response->getBody()->getContents();
 ```

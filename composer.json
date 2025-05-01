@@ -2,7 +2,7 @@
     "name": "mitoop/laravel-signature-sdk",
     "autoload": {
         "psr-4": {
-            "Mitoop\\LaravelSignatureSdk\\": "src/"
+            "Mitoop\\SignatureSdk\\": "src/"
         }
     },
     "authors": [

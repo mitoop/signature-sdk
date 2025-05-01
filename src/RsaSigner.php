@@ -1,6 +1,6 @@
 <?php
 
-namespace Mitoop\LaravelSignatureSdk;
+namespace Mitoop\SignatureSdk;
 
 class RsaSigner extends AbstractSigner
 {
