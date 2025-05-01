@@ -1,5 +1,5 @@
 {
-    "name": "mitoop/laravel-signature-sdk",
+    "name": "mitoop/signature-sdk",
     "autoload": {
         "psr-4": {
             "Mitoop\\SignatureSdk\\": "src/"
