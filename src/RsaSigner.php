@@ -34,6 +34,11 @@ class RsaSigner extends AbstractSigner
             OPENSSL_ALGO_SHA256) === 1;
     }
 
+    public function getAlgorithmHeader(): string
+    {
+        return 'RSA2048-SHA256';
+    }
+
     protected function formatKey(string $key, string $type): string
     {
         $headers = [

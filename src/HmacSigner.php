@@ -23,4 +23,9 @@ class HmacSigner extends AbstractSigner
             $signature
         );
     }
+
+    public function getAlgorithmHeader(): string
+    {
+        return 'HMAC-SHA256';
+    }
 }

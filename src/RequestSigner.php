@@ -39,6 +39,6 @@ class RequestSigner
             $sign
         );
 
-        return sprintf('%s-RSA2048-SHA256 %s', $this->platformPrefix, $authorization);
+        return sprintf('%s-%s %s', $this->platformPrefix, $this->signer->getAlgorithmHeader(), $authorization);
     }
 }
