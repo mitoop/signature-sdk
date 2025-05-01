@@ -4,7 +4,7 @@ namespace Mitoop\SignatureSdk;
 
 abstract class AbstractSigner implements SignerInterface
 {
-    protected function buildMessage(array $args): string
+    protected function buildRequestMessage(array $args): string
     {
         $urlPath = parse_url($args['url'], PHP_URL_PATH);
         $urlQuery = parse_url($args['url'], PHP_URL_QUERY);
@@ -14,5 +14,12 @@ abstract class AbstractSigner implements SignerInterface
             $args['timestamp']."\n".
             $args['nonce']."\n".
             ($args['data'] ? json_encode($args['data']) : '')."\n";
+    }
+
+    protected function buildCallbackMessage($timestamp, $nonce, $data): string
+    {
+        return $timestamp."\n".
+             $nonce."\n".
+             $data."\n";
     }
 }
