@@ -5,7 +5,7 @@ It is the core signing engine used by laravel-signature, but can also be used in
 ## Requirements
 - PHP 7.4 or higher
 - OpenSSL extension enabled
-- 
+
 ## Installation
 Install via Composer:
 ```bash
