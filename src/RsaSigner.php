@@ -36,7 +36,7 @@ class RsaSigner extends AbstractSigner
 
     public function getAlgorithmHeader(string $prefix): string
     {
-        return sprintf('%s-%s', $prefix, 'RSA2048-SHA256');
+        return sprintf('%s-%s', $prefix, 'SHA256-RSA2048');
     }
 
     protected function formatKey(string $key, string $type): string
