@@ -10,7 +10,7 @@ class RsaSigner extends AbstractSigner
 
     public function __construct(string $key)
     {
-        $this->key = $key;
+        $this->key = trim($key);
     }
 
     /**

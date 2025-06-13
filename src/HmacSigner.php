@@ -8,7 +8,7 @@ class HmacSigner extends AbstractSigner
 
     public function __construct(string $secretKey)
     {
-        $this->secretKey = $secretKey;
+        $this->secretKey = trim($secretKey);
     }
 
     public function sign(array $args): string
