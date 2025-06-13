@@ -26,6 +26,6 @@ class HmacSigner extends AbstractSigner
 
     public function getAlgorithmHeader(string $prefix): string
     {
-        return sprintf('%s-%s', $prefix, 'HMAC-SHA256');
+        return sprintf('%s-%s', $prefix, 'SHA256-HMAC');
     }
 }

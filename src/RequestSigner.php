@@ -17,7 +17,7 @@ class RequestSigner
         $this->mchid = $mchid;
         $this->appid = $appid;
         $this->signer = $signer;
-        $this->platformPrefix = $platformPrefix;
+        $this->platformPrefix = strtoupper($platformPrefix);
     }
 
     public function generateAuthorization(string $method, string $url, ?array $data = null): string
