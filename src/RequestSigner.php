@@ -2,7 +2,10 @@
 
 namespace Mitoop\SignatureSdk;
 
-class RequestSigner
+use Mitoop\SignatureSdk\Contracts\RequestSignerInterface;
+use Mitoop\SignatureSdk\Contracts\SignerInterface;
+
+class RequestSigner implements RequestSignerInterface
 {
     protected string $platformPrefix;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mitoop\SignatureSdk;
+namespace Mitoop\SignatureSdk\Contracts;
 
 interface SignerInterface
 {

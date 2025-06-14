@@ -15,10 +15,12 @@ composer require mitoop/signature-sdk
 ## 🚀 Quick Start
 
 #### 🔐 Using RSA Signature:
+
 ```php
-use Mitoop\SignatureSdk\RsaSigner;
-use Mitoop\SignatureSdk\RequestSigner;
 use Mitoop\SignatureSdk\Client;
+use Mitoop\SignatureSdk\RequestSigner;
+use Mitoop\SignatureSdk\Signers\RsaSigner;
+
 $privateKey = 'your_rsa_private_key_string';
 $publicKey = 'plat_rsa_public_key_string';
 

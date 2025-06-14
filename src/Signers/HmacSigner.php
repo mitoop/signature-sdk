@@ -1,6 +1,6 @@
 <?php
 
-namespace Mitoop\SignatureSdk;
+namespace Mitoop\SignatureSdk\Signers;
 
 class HmacSigner extends AbstractSigner
 {

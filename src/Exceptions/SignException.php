@@ -1,6 +1,6 @@
 <?php
 
-namespace Mitoop\SignatureSdk;
+namespace Mitoop\SignatureSdk\Exceptions;
 
 use Exception;
 

@@ -1,6 +1,8 @@
 <?php
 
-namespace Mitoop\SignatureSdk;
+namespace Mitoop\SignatureSdk\Signers;
+
+use Mitoop\SignatureSdk\Contracts\SignerInterface;
 
 abstract class AbstractSigner implements SignerInterface
 {

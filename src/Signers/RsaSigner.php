@@ -1,8 +1,9 @@
 <?php
 
-namespace Mitoop\SignatureSdk;
+namespace Mitoop\SignatureSdk\Signers;
 
 use InvalidArgumentException;
+use Mitoop\SignatureSdk\Exceptions\SignException;
 
 class RsaSigner extends AbstractSigner
 {
