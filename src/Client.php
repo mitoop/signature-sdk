@@ -19,6 +19,14 @@ class Client
 
     protected RequestSigner $requestSigner;
 
+    /**
+     * @param array{
+     *       mchid: string|int,
+     *       appid: string|int,
+     *       base_url: string,
+     *       platform_prefix: string,
+     *   } $config
+     */
     public function __construct(array $config, SignerInterface $signer, ?ClientInterface $client = null)
     {
         $this->mchid = $config['mchid'];
