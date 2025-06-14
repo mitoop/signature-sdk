@@ -38,18 +38,14 @@ class Client
         ]);
     }
 
-    public function post($url, array $data, array $headers = []): Response
+    public function post($url, array $data, array $headers = [])
     {
-        $response = $this->client->post($url, [
+        return $this->client->post($url, [
             'json' => $data,
             'headers' => array_merge($headers, [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
                 'Authorization' => $this->requestSigner->sign('POST', $this->fullUrl($url), $data),
             ]),
         ]);
-
-        return new Response($response);
     }
 
     protected function fullUrl(string $url): string
