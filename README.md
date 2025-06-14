@@ -1,6 +1,6 @@
 # Signature Sdk
 Signature SDK is a framework-agnostic PHP library that provides secure request signing and verification logic.
-It is the core signing engine used by laravel-signature, but can also be used independently in any PHP project.
+It is the core signing engine used by [laravel-signature](https://github.com/mitoop/laravel-signature).
 
 ## Requirements
 - PHP 7.4 or higher
@@ -18,38 +18,32 @@ composer require mitoop/signature-sdk
 ```php
 use Mitoop\SignatureSdk\RsaSigner;
 use Mitoop\SignatureSdk\RequestSigner;
+use Mitoop\SignatureSdk\Client;
+$privateKey = 'your_rsa_private_key_string';
+$publicKey = 'plat_rsa_public_key_string';
 
-$privateKey = 'your_rsa_private_key_string_without_BEGIN/END';
+$signer = new RsaSigner($privateKey, $publicKey);
 
 $requestSigner = new RequestSigner(
     mchid: 'your_merchant_id',
     appid: 'your_app_id',
-    signer: new RsaSigner($privateKey),
-    platformPrefix: 'XXX' // Platform prefix
+    signer: $signer,
+    platformPrefix: 'MP' // Paltform prefix
 );
 
-$authorization = $requestSigner->generateAuthorization(
-    method: 'POST',
-    url: 'https://api.example.com/v1/pay',
-    data: [
-        'amount' => 100,
-        'currency' => 'USD'
-    ]
-);
-
-// Initialize Guzzle client
-$client = new Client();
-
-$response = $client->post('https://api.example.com/v1/pay', [
-    'json' => [
-        'amount' => 100,
-        'currency' => 'USD',
+$client = new Client(
+    config: [
+        'base_url' => 'https://api.example.com',
     ],
-    'headers' => [
-        'Authorization' => $authorization,
-        'Accept' => 'application/json',
-    ]
+    signer: $requestSigner
+);
+
+$response = $client->post('/v1/pay', [
+    'amount' => 100,
+    'currency' => 'USD',
 ]);
 
-echo $response->getBody()->getContents();
+$data = json_decode((string) $response->getBody(), true);
+
+print_r($data);
 ```
