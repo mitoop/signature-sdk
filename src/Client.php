@@ -7,9 +7,9 @@ use GuzzleHttp\ClientInterface;
 
 class Client
 {
-    protected ClientInterface $client;
-
     protected string $baseUrl;
+
+    protected ClientInterface $client;
 
     protected RequestSigner $signer;
 
