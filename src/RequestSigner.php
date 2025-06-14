@@ -20,7 +20,7 @@ class RequestSigner
         $this->platformPrefix = strtoupper($platformPrefix);
     }
 
-    public function generateAuthorization(string $method, string $url, ?array $data = null): string
+    public function sign(string $method, string $url, ?array $data = null): string
     {
         $sign = $this->signer->sign([
             'method' => $method,
@@ -40,5 +40,10 @@ class RequestSigner
         );
 
         return sprintf('%s %s', $this->signer->getAlgorithmHeader($this->platformPrefix), $authorization);
+    }
+
+    public function verify(string $timestamp, string $nonce, string $data, string $signature): bool
+    {
+        return $this->signer->verify($timestamp, $nonce, $data, $signature);
     }
 }
