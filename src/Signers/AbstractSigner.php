@@ -24,4 +24,9 @@ abstract class AbstractSigner implements SignerInterface
              $nonce."\n".
              $data."\n";
     }
+
+    protected function formatAlgorithmHeader(string $prefix, string $signType): string
+    {
+        return sprintf('%s-%s', $prefix, $signType);
+    }
 }

@@ -1,10 +1,5 @@
 {
     "name": "mitoop/signature-sdk",
-    "autoload": {
-        "psr-4": {
-            "Mitoop\\SignatureSdk\\": "src/"
-        }
-    },
     "authors": [
         {
             "name": "mitoop",
@@ -12,9 +7,17 @@
         }
     ],
     "require": {
-      "php": "^7.4|^8.0",
-      "ext-json": "*",
-      "ext-openssl": "*",
-      "guzzlehttp/guzzle": "^7.0"
+        "php": "^7.4 || ^8.0",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "suggest": {
+        "phpseclib/phpseclib": "Required if you want to use Ed25519Signer for signing and verification."
+    },
+    "autoload": {
+        "psr-4": {
+            "Mitoop\\SignatureSdk\\": "src/"
+        }
     }
 }

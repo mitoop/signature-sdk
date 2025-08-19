@@ -2,20 +2,11 @@
 
 namespace Mitoop\SignatureSdk\Signers;
 
-use InvalidArgumentException;
 use Mitoop\SignatureSdk\Exceptions\SignException;
 
 class RsaSigner extends AbstractSigner
 {
-    protected string $privateKey;
-
-    protected string $publicKey;
-
-    public function __construct(string $privateKey, string $publicKey)
-    {
-        $this->privateKey = $privateKey;
-        $this->publicKey = $publicKey;
-    }
+    use KeyFormatTrait;
 
     /**
      * @throws SignException
@@ -40,48 +31,6 @@ class RsaSigner extends AbstractSigner
 
     public function getAlgorithmHeader(string $prefix): string
     {
-        return sprintf('%s-%s', $prefix, 'SHA256-RSA2048');
-    }
-
-    protected function formatKey(string $key, string $type): string
-    {
-        $headers = [
-            'private' => ['BEGIN PRIVATE KEY', 'END PRIVATE KEY'],
-            'public' => ['BEGIN PUBLIC KEY', 'END PUBLIC KEY'],
-        ];
-
-        if (! isset($headers[$type])) {
-            throw new InvalidArgumentException("Unsupported key type: $type");
-        }
-
-        [$begin, $end] = $headers[$type];
-
-        if (strpos($key, $begin) !== false) {
-            return $key;
-        }
-
-        return "-----$begin-----\n".
-            wordwrap($key, 64, "\n", true).
-            "\n-----$end-----";
-    }
-
-    protected function formatPrivateKey(string $key): string
-    {
-        return $this->formatKey($key, 'private');
-    }
-
-    protected function formatPublicKey(string $key): string
-    {
-        return $this->formatKey($key, 'public');
-    }
-
-    protected function getPrivateKey(): string
-    {
-        return trim($this->privateKey);
-    }
-
-    protected function getPublicKey(): string
-    {
-        return trim($this->publicKey);
+        return $this->formatAlgorithmHeader($prefix, SignType::SHA256_RSA2048);
     }
 }

@@ -26,7 +26,7 @@ class HmacSigner extends AbstractSigner
 
     public function getAlgorithmHeader(string $prefix): string
     {
-        return sprintf('%s-%s', $prefix, 'SHA256-HMAC');
+        return $this->formatAlgorithmHeader($prefix, SignType::SHA256_HMAC);
     }
 
     protected function getSecretKey(): string
