@@ -13,6 +13,8 @@ composer require mitoop/signature-sdk
 ```
 
 ## 🚀 Quick Start
+Signature SDK supports the following signature methods:
+**SHA256-RSA2048**, **SHA256-HMAC**, and **ED25519**
 
 #### 🔐 Using RSA Signature:
 
