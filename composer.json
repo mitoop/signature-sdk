@@ -10,7 +10,7 @@
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
         "ext-openssl": "*",
-        "guzzlehttp/guzzle": "^7.0"
+        "guzzlehttp/guzzle": "^6.5.0 || ^7.0"
     },
     "suggest": {
         "phpseclib/phpseclib": "Required if you want to use Ed25519Signer for signing and verification."
