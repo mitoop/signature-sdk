@@ -13,6 +13,7 @@
         "guzzlehttp/guzzle": "^6.5.0 || ^7.0 || ^8.0"
     },
     "description": "支持多商户、多应用的 API 请求签名与回调验签。",
+    "license": "MIT",
     "suggest": {
         "phpseclib/phpseclib": "Required if you want to use Ed25519Signer for signing and verification."
     },
