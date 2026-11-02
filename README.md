@@ -29,7 +29,7 @@ composer require phpseclib/phpseclib:^3.0
 
 商户为每个应用生成一对公私钥，私钥自己保存，公钥放到平台。请求由商户私钥签名，平台用该应用的公钥验签。`SHA256-HMAC` 没有公私钥，商户和平台共用同一把密钥。
 
-`prefix` 是平台分配的签名前缀，不能包含连字符。`mchid` 是商户号，`appid` 是该商户下的应用号。
+`mchid` 是商户号，`appid` 是该商户下的应用号。签名前缀由平台给出，按平台给出的值传入，不能包含连字符。
 
 ```php
 use Mitoop\SignatureSdk\Client;
@@ -58,12 +58,6 @@ use Mitoop\SignatureSdk\Signers\HmacSigner;
 $signer = new HmacSigner($key);
 ```
 
-`your_app` 会生成这样的 `Authorization`：
-
-```text
-YOUR_APP-SHA256-RSA2048 mchid="10001",appid="app_001",nonce="abc",timestamp="1710000000",sign="base64 签名"
-```
-
 待签名字符串由请求方法、URI、时间戳、nonce 和实际发出的 JSON 正文组成。每段以 `\n` 结束，包括最后一段：
 
 ```text
@@ -90,7 +84,7 @@ abc\n
 {"order_id":"123456","status":"success"}\n
 ```
 
-平台回调会带上这些请求头。`your_app` 对应：
+平台回调会带上这些请求头，前缀使用平台给出的值：
 
 ```text
 Your_app-Nonce
