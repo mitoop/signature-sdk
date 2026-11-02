@@ -1,36 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mitoop\SignatureSdk\Signers;
 
 class HmacSigner extends AbstractSigner
 {
-    protected string $secretKey;
+    protected string $key;
 
-    public function __construct(string $secretKey)
+    public function __construct(string $key)
     {
-        $this->secretKey = $secretKey;
+        $this->key = $key;
     }
 
-    public function sign(array $args): string
+    public function sign(string $method, string $url, string $body, int $timestamp, string $nonce): string
     {
-        return base64_encode(hash_hmac('sha256', $this->buildRequestMessage($args), $this->getSecretKey(), true));
+        return $this->digest($this->requestStringToSign($method, $url, $body, $timestamp, $nonce));
     }
 
-    public function verify(string $timestamp, string $nonce, string $data, string $signature): bool
+    public function verify(string $timestamp, string $nonce, string $body, string $signature): bool
     {
-        return hash_equals(
-            base64_encode(hash_hmac('sha256', $this->buildCallbackMessage($timestamp, $nonce, $data), $this->getSecretKey(), true)),
-            $signature
-        );
+        $expected = $this->digest($this->callbackStringToSign($timestamp, $nonce, $body));
+
+        if (strlen($expected) !== strlen($signature)) {
+            return false;
+        }
+
+        return hash_equals($expected, $signature);
     }
 
-    public function getAlgorithmHeader(string $prefix): string
+    public function scheme(string $prefix): string
     {
-        return $this->formatAlgorithmHeader($prefix, SignType::SHA256_HMAC);
+        return strtoupper($prefix).'-'.SignType::SHA256_HMAC;
     }
 
-    protected function getSecretKey(): string
+    protected function digest(string $stringToSign): string
     {
-        return trim($this->secretKey);
+        return base64_encode(hash_hmac('sha256', $stringToSign, trim($this->key), true));
     }
 }

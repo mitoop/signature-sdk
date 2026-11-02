@@ -1,32 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mitoop\SignatureSdk\Signers;
 
 use Mitoop\SignatureSdk\Contracts\SignerInterface;
 
 abstract class AbstractSigner implements SignerInterface
 {
-    protected function buildRequestMessage(array $args): string
+    protected function requestStringToSign(string $method, string $url, string $body, int $timestamp, string $nonce): string
     {
-        $urlPath = parse_url($args['url'], PHP_URL_PATH);
-        $urlQuery = parse_url($args['url'], PHP_URL_QUERY);
+        $path = parse_url($url, PHP_URL_PATH) ?: '';
+        $query = parse_url($url, PHP_URL_QUERY);
 
-        return strtoupper($args['method'])."\n".
-            $urlPath.(empty($urlQuery) ? '' : '?'.$urlQuery)."\n".
-            $args['timestamp']."\n".
-            $args['nonce']."\n".
-            ($args['data'] ? json_encode($args['data']) : '')."\n";
+        $uri = $path.($query === null || $query === '' ? '' : '?'.$query);
+
+        return strtoupper($method)."\n".
+            $uri."\n".
+            $timestamp."\n".
+            $nonce."\n".
+            $body."\n";
     }
 
-    protected function buildCallbackMessage($timestamp, $nonce, $data): string
+    protected function callbackStringToSign(string $timestamp, string $nonce, string $body): string
     {
         return $timestamp."\n".
-             $nonce."\n".
-             $data."\n";
-    }
-
-    protected function formatAlgorithmHeader(string $prefix, string $signType): string
-    {
-        return sprintf('%s-%s', $prefix, $signType);
+            $nonce."\n".
+            $body."\n";
     }
 }

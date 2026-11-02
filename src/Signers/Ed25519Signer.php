@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mitoop\SignatureSdk\Signers;
 
 use Mitoop\SignatureSdk\Exceptions\SignException;
@@ -13,12 +15,12 @@ class Ed25519Signer extends AbstractSigner
     /**
      * @throws SignException
      */
-    public function sign(array $args): string
+    public function sign(string $method, string $url, string $body, int $timestamp, string $nonce): string
     {
         try {
-            $privateKey = EC::loadPrivateKey($this->getPrivateKey());
+            $privateKey = EC::loadPrivateKey($this->formatPrivateKey($this->getPrivateKey()));
 
-            return base64_encode($privateKey->sign($this->buildRequestMessage($args)));
+            return base64_encode($privateKey->sign($this->requestStringToSign($method, $url, $body, $timestamp, $nonce)));
         } catch (Throwable $e) {
             throw new SignException('Sign failed: '.$e->getMessage());
         }
@@ -27,26 +29,25 @@ class Ed25519Signer extends AbstractSigner
     /**
      * @throws SignException
      */
-    public function verify(string $timestamp, string $nonce, string $data, string $signature): bool
+    public function verify(string $timestamp, string $nonce, string $body, string $signature): bool
     {
-        $signature = base64_decode($signature, true);
+        $decoded = base64_decode($signature, true);
 
-        if ($signature === false) {
-            throw new SignException('Invalid base64 signature');
+        if ($decoded === false) {
+            return false;
         }
 
         try {
-            $publicKey = EC::loadPublicKey($this->getPublicKey());
+            $publicKey = EC::loadPublicKey($this->formatPublicKey($this->getPublicKey()));
 
-            return $publicKey->verify($this->buildCallbackMessage($timestamp, $nonce, $data), $signature);
+            return $publicKey->verify($this->callbackStringToSign($timestamp, $nonce, $body), $decoded);
         } catch (Throwable $e) {
             throw new SignException('Verify failed: '.$e->getMessage());
         }
-
     }
 
-    public function getAlgorithmHeader(string $prefix): string
+    public function scheme(string $prefix): string
     {
-        return $this->formatAlgorithmHeader($prefix, SignType::ED25519);
+        return strtoupper($prefix).'-'.SignType::ED25519;
     }
 }

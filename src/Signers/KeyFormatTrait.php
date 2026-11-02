@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mitoop\SignatureSdk\Signers;
+
+use Mitoop\SignatureSdk\Pem;
 
 trait KeyFormatTrait
 {
@@ -14,29 +18,14 @@ trait KeyFormatTrait
         $this->publicKey = $publicKey;
     }
 
-    protected function formatKey(string $key, string $type): string
-    {
-        $type = strtoupper($type);
-
-        $pemHeader = "-----BEGIN $type KEY-----";
-
-        if (strpos($key, $pemHeader) !== false) {
-            return $key;
-        }
-
-        return "-----BEGIN $type KEY-----\n"
-            .chunk_split($key, 64, "\n")
-            ."-----END $type KEY-----\n";
-    }
-
     protected function formatPrivateKey(string $key): string
     {
-        return $this->formatKey($key, 'private');
+        return Pem::format($key, 'private');
     }
 
     protected function formatPublicKey(string $key): string
     {
-        return $this->formatKey($key, 'public');
+        return Pem::format($key, 'public');
     }
 
     protected function getPrivateKey(): string

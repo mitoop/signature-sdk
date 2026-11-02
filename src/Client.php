@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mitoop\SignatureSdk;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface;
+use Mitoop\SignatureSdk\Contracts\RequestSignerInterface;
+use Mitoop\SignatureSdk\Exceptions\SignException;
+use Psr\Http\Message\ResponseInterface;
 
 class Client
 {
@@ -11,21 +16,19 @@ class Client
 
     protected ClientInterface $client;
 
-    protected RequestSigner $signer;
+    protected RequestSignerInterface $signer;
 
     /**
-     * @param array{
-     *       base_url: string,
-     *   } $config
+     * @param  array{base_url: string, timeout?: int, verify?: bool}  $config
      */
-    public function __construct(array $config, RequestSigner $signer, ?ClientInterface $client = null)
+    public function __construct(array $config, RequestSignerInterface $signer, ?ClientInterface $client = null)
     {
         $this->baseUrl = rtrim($config['base_url'], '/');
         $this->signer = $signer;
         $this->client = $client ?: new GuzzleClient([
-            'verify' => false,
+            'verify' => $config['verify'] ?? true,
             'http_errors' => false,
-            'timeout' => 120,
+            'timeout' => $config['timeout'] ?? 60,
             'base_uri' => $this->baseUrl,
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -34,18 +37,27 @@ class Client
         ]);
     }
 
-    public function post($url, array $data, array $headers = [])
+    /**
+     * @throws SignException
+     */
+    public function post(string $url, array $data = [], array $headers = []): ResponseInterface
     {
+        $body = json_encode($data);
+
+        if ($body === false) {
+            throw new SignException('JSON encoding failed.');
+        }
+
         return $this->client->post($url, [
-            'json' => $data,
+            'body' => $body,
             'headers' => array_merge($headers, [
-                'Authorization' => $this->signer->sign('POST', $this->fullUrl($url), $data),
+                'Authorization' => $this->signer->authorization('POST', $this->fullUrl($url), $body),
             ]),
         ]);
     }
 
     protected function fullUrl(string $url): string
     {
-        return rtrim($this->baseUrl, '/').'/'.ltrim($url, '/');
+        return $this->baseUrl.'/'.ltrim($url, '/');
     }
 }

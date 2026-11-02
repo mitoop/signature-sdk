@@ -10,14 +10,27 @@
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
         "ext-openssl": "*",
-        "guzzlehttp/guzzle": "^6.5.0 || ^7.0"
+        "guzzlehttp/guzzle": "^6.5.0 || ^7.0 || ^8.0"
     },
+    "description": "支持多商户、多应用的 API 请求签名与回调验签。",
     "suggest": {
         "phpseclib/phpseclib": "Required if you want to use Ed25519Signer for signing and verification."
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6 || ^10.5 || ^11.5",
+        "phpseclib/phpseclib": "^3.0"
     },
     "autoload": {
         "psr-4": {
             "Mitoop\\SignatureSdk\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mitoop\\SignatureSdk\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "@php vendor/bin/phpunit"
     }
 }

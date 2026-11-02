@@ -1,52 +1,57 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mitoop\SignatureSdk;
 
 use Mitoop\SignatureSdk\Contracts\RequestSignerInterface;
 use Mitoop\SignatureSdk\Contracts\SignerInterface;
+use Mitoop\SignatureSdk\Exceptions\SignException;
 
 class RequestSigner implements RequestSignerInterface
 {
-    protected string $platformPrefix;
+    protected string $prefix;
 
-    protected string $mchid;
+    protected string $mchId;
 
-    protected string $appid;
+    protected string $appId;
 
     protected SignerInterface $signer;
 
-    public function __construct(string $mchid, string $appid, SignerInterface $signer, string $platformPrefix)
+    /**
+     * @throws SignException
+     */
+    public function __construct(string $mchId, string $appId, SignerInterface $signer, string $prefix)
     {
-        $this->mchid = $mchid;
-        $this->appid = $appid;
+        if (strpos($prefix, '-') !== false) {
+            throw new SignException('Prefix must not contain a hyphen.');
+        }
+
+        $this->mchId = $mchId;
+        $this->appId = $appId;
         $this->signer = $signer;
-        $this->platformPrefix = strtoupper($platformPrefix);
+        $this->prefix = $prefix;
     }
 
-    public function sign(string $method, string $url, ?array $data = null): string
+    public function authorization(string $method, string $url, string $body): string
     {
-        $sign = $this->signer->sign([
-            'method' => $method,
-            'url' => $url,
-            'data' => $data,
-            'timestamp' => $timestamp = time(),
-            'nonce' => $nonce = bin2hex(random_bytes(16)),
-        ]);
+        $timestamp = time();
+        $nonce = bin2hex(random_bytes(16));
+        $sign = $this->signer->sign($method, $url, $body, $timestamp, $nonce);
 
-        $authorization = sprintf(
-            'mchid="%s",appid="%s",nonce="%s",timestamp="%d",sign="%s"',
-            $this->mchid,
-            $this->appid,
+        return sprintf(
+            '%s mchid="%s",appid="%s",nonce="%s",timestamp="%d",sign="%s"',
+            $this->signer->scheme($this->prefix),
+            $this->mchId,
+            $this->appId,
             $nonce,
             $timestamp,
             $sign
         );
-
-        return sprintf('%s %s', $this->signer->getAlgorithmHeader($this->platformPrefix), $authorization);
     }
 
-    public function verify(string $timestamp, string $nonce, string $data, string $signature): bool
+    public function verify(string $timestamp, string $nonce, string $body, string $signature): bool
     {
-        return $this->signer->verify($timestamp, $nonce, $data, $signature);
+        return $this->signer->verify($timestamp, $nonce, $body, $signature);
     }
 }

@@ -1,6 +1,10 @@
 <?php
 
-use Mitoop\SignatureSdk\Exceptions\SignException;
+declare(strict_types=1);
+
+namespace Mitoop\SignatureSdk\Crypto;
+
+use Mitoop\SignatureSdk\Exceptions\CryptoException;
 
 class AesGcm
 {
@@ -9,7 +13,7 @@ class AesGcm
     public const TAG_LENGTH = 16;
 
     /**
-     * @throws SignException
+     * @throws CryptoException
      */
     public function encrypt(string $plaintext, string $key, string $associatedData = ''): array
     {
@@ -28,7 +32,7 @@ class AesGcm
         );
 
         if ($ciphertext === false) {
-            throw new SignException('Encrypting the input $plaintext failed, please check your key and IV.');
+            throw new CryptoException('Encrypting the plaintext failed.');
         }
 
         return [
@@ -39,28 +43,33 @@ class AesGcm
     }
 
     /**
-     * @throws SignException
+     * @throws CryptoException
      */
-    public function decrypt(
-        string $ciphertext,
-        string $key,
-        string $iv,
-        string $associatedData = ''
-    ): string {
+    public function decrypt(string $ciphertext, string $key, string $iv, string $associatedData = ''): string
+    {
         $decodedCiphertext = base64_decode($ciphertext, true);
+
         if ($decodedCiphertext === false) {
-            throw new SignException('Base64 decoding failed. Invalid ciphertext.');
+            throw new CryptoException('Base64 decoding failed. Invalid ciphertext.');
         }
+
         if (strlen($decodedCiphertext) < self::TAG_LENGTH) {
-            throw new SignException('Ciphertext too short, cannot extract auth tag.');
+            throw new CryptoException('Ciphertext too short, cannot extract auth tag.');
         }
+
         $tag = substr($decodedCiphertext, -self::TAG_LENGTH);
         $cipherData = substr($decodedCiphertext, 0, -self::TAG_LENGTH);
+        $decodedIv = base64_decode($iv, true);
+        $expectedIvLength = openssl_cipher_iv_length(static::ALGO);
 
-        $plaintext = openssl_decrypt($cipherData, static::ALGO, $key, OPENSSL_RAW_DATA, $iv, $tag, $associatedData);
+        if ($decodedIv === false || strlen($decodedIv) !== $expectedIvLength) {
+            throw new CryptoException('Base64 decoding failed. Invalid IV.');
+        }
+
+        $plaintext = openssl_decrypt($cipherData, static::ALGO, $key, OPENSSL_RAW_DATA, $decodedIv, $tag, $associatedData);
 
         if ($plaintext === false) {
-            throw new SignException('Decrypting the input $ciphertext failed, please checking your $key and $iv whether or nor correct.');
+            throw new CryptoException('Decrypting the ciphertext failed.');
         }
 
         return $plaintext;
